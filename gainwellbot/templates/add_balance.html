@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Add Balance to User</h1>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">💰 Add Balance</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="search_term" class="form-label">Find User</label>
+                        <input type="text" class="form-control" id="search_term" name="search_term" required 
+                               placeholder="Search by User ID, @username, or name">
+                        <div class="form-text">You can search by User ID (123456789), username (@john), or first name (John).</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount (₱)</label>
+                        <input type="number" class="form-control" id="amount" name="amount" 
+                               step="0.01" min="0.01" required placeholder="0.00">
+                        <div class="form-text">Enter the amount to add to the user's balance.</div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Add Balance
+                        </button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="card-title mb-0">💡 How to find User ID</h6>
+            </div>
+            <div class="card-body">
+                <ol class="mb-0">
+                    <li>Go to the <a href="{{ url_for('users') }}">Users page</a></li>
+                    <li>Find the user you want to add balance to</li>
+                    <li>Copy their User ID from the table</li>
+                    <li>Paste it in the form above</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

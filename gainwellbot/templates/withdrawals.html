@@ -1,0 +1,273 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">💸 Withdrawals</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2" role="group">
+            <a href="{{ url_for('withdrawals', status='pending') }}" 
+               class="btn btn-sm {{ 'btn-primary' if current_status == 'pending' else 'btn-outline-primary' }}">
+                Pending
+            </a>
+            <a href="{{ url_for('withdrawals', status='approved') }}" 
+               class="btn btn-sm {{ 'btn-success' if current_status == 'approved' else 'btn-outline-success' }}">
+                Approved
+            </a>
+            <a href="{{ url_for('withdrawals', status='rejected') }}" 
+               class="btn btn-sm {{ 'btn-danger' if current_status == 'rejected' else 'btn-outline-danger' }}">
+                Rejected
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Mobile Cards for small screens -->
+<div class="d-md-none">
+    {% for withdrawal in withdrawals %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <h6 class="card-title mb-0">#{{ withdrawal.id }} - {{ withdrawal.first_name }}</h6>
+                {% if withdrawal.status == 'pending' %}
+                    <span class="badge bg-warning">⏳ Pending</span>
+                {% elif withdrawal.status == 'approved' %}
+                    <span class="badge bg-success">✅ Approved</span>
+                {% elif withdrawal.status == 'rejected' %}
+                    <span class="badge bg-danger">❌ Rejected</span>
+                {% endif %}
+            </div>
+            
+            <div class="row g-2 mb-3">
+                <div class="col-6">
+                    <small class="text-muted">Amount</small>
+                    <div class="fw-bold text-success">{{ withdrawal.amount }}</div>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted">GCash</small>
+                    <div><code>{{ withdrawal.gcash_number }}</code></div>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted">User</small>
+                    <div>{{ withdrawal.username }} ({{ withdrawal.user_id }})</div>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted">Requested</small>
+                    <div>{{ withdrawal.timestamp[:16] }}</div>
+                </div>
+                {% if current_status != 'pending' %}
+                <div class="col-6">
+                    <small class="text-muted">Completed</small>
+                    <div>{{ withdrawal.completed_at[:16] if withdrawal.completed_at else '-' }}</div>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted">Note</small>
+                    <div>{{ withdrawal.admin_note or '-' }}</div>
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if current_status == 'pending' %}
+            <div class="d-grid gap-2">
+                <div class="btn-group">
+                    <button class="btn btn-success" onclick="approveWithdrawal({{ withdrawal.id }})">
+                        <i class="bi bi-check-circle"></i> Approve
+                    </button>
+                    <button class="btn btn-danger" onclick="rejectWithdrawal({{ withdrawal.id }})">
+                        <i class="bi bi-x-circle"></i> Reject
+                    </button>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Desktop Table for medium+ screens -->
+<div class="card d-none d-md-block">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Amount</th>
+                        <th>GCash Number</th>
+                        <th>Status</th>
+                        <th>Requested</th>
+                        {% if current_status != 'pending' %}
+                        <th>Completed</th>
+                        <th>Note</th>
+                        {% endif %}
+                        {% if current_status == 'pending' %}
+                        <th>Actions</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for withdrawal in withdrawals %}
+                    <tr>
+                        <td><strong>#{{ withdrawal.id }}</strong></td>
+                        <td>
+                            <div>{{ withdrawal.first_name }}</div>
+                            <small class="text-muted">{{ withdrawal.username }} ({{ withdrawal.user_id }})</small>
+                        </td>
+                        <td><strong class="text-success">{{ withdrawal.amount }}</strong></td>
+                        <td><code>{{ withdrawal.gcash_number }}</code></td>
+                        <td>
+                            {% if withdrawal.status == 'pending' %}
+                                <span class="badge bg-warning">⏳ Pending</span>
+                            {% elif withdrawal.status == 'approved' %}
+                                <span class="badge bg-success">✅ Approved</span>
+                            {% elif withdrawal.status == 'rejected' %}
+                                <span class="badge bg-danger">❌ Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ withdrawal.timestamp }}</td>
+                        {% if current_status != 'pending' %}
+                        <td>{{ withdrawal.completed_at }}</td>
+                        <td>{{ withdrawal.admin_note or '-' }}</td>
+                        {% endif %}
+                        {% if current_status == 'pending' %}
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-success btn-sm" onclick="approveWithdrawal({{ withdrawal.id }})">
+                                    <i class="bi bi-check-circle"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="rejectWithdrawal({{ withdrawal.id }})">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </div>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if withdrawals|length == 0 %}
+<div class="card">
+    <div class="card-body">
+        <div class="text-center py-4">
+            <i class="bi bi-inbox fs-1 text-muted"></i>
+            <p class="text-muted mt-2">No {{ current_status }} withdrawals found.</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Confirmation Modals -->
+<div class="modal fade" id="approveModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-check-circle"></i> Approve Withdrawal
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to approve this withdrawal?</p>
+                <p><strong>The user will be notified via Telegram immediately.</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" id="confirmApprove">Approve Withdrawal</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="rejectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-x-circle"></i> Reject Withdrawal
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to reject this withdrawal?</p>
+                <p><strong>The amount will be refunded to the user's balance and they will be notified via Telegram.</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmReject">Reject & Refund</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentWithdrawalId = null;
+
+function showSuccessModal(message) {
+    document.getElementById('successMessage').textContent = message;
+    new bootstrap.Modal(document.getElementById('successModal')).show();
+}
+
+function showErrorModal(message) {
+    document.getElementById('errorMessage').textContent = message;
+    new bootstrap.Modal(document.getElementById('errorModal')).show();
+}
+
+function approveWithdrawal(withdrawalId) {
+    currentWithdrawalId = withdrawalId;
+    new bootstrap.Modal(document.getElementById('approveModal')).show();
+}
+
+function rejectWithdrawal(withdrawalId) {
+    currentWithdrawalId = withdrawalId;
+    new bootstrap.Modal(document.getElementById('rejectModal')).show();
+}
+
+function processApproval() {
+    fetch(`/api/approve_withdrawal/${currentWithdrawalId}`)
+        .then(response => response.json())
+        .then(data => {
+            bootstrap.Modal.getInstance(document.getElementById('approveModal')).hide();
+            if (data.success) {
+                showSuccessModal('✅ Withdrawal approved successfully! User has been notified via Telegram.');
+                setTimeout(() => location.reload(), 2000);
+            } else {
+                showErrorModal('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            bootstrap.Modal.getInstance(document.getElementById('approveModal')).hide();
+            showErrorModal('Network error occurred. Please try again.');
+        });
+}
+
+function processRejection() {
+    fetch(`/api/reject_withdrawal/${currentWithdrawalId}`)
+        .then(response => response.json())
+        .then(data => {
+            bootstrap.Modal.getInstance(document.getElementById('rejectModal')).hide();
+            if (data.success) {
+                showSuccessModal('❌ Withdrawal rejected and refunded successfully! User has been notified via Telegram.');
+                setTimeout(() => location.reload(), 2000);
+            } else {
+                showErrorModal('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            bootstrap.Modal.getInstance(document.getElementById('rejectModal')).hide();
+            showErrorModal('Network error occurred. Please try again.');
+        });
+}
+
+// Event listeners for confirmation buttons
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('confirmApprove').addEventListener('click', processApproval);
+    document.getElementById('confirmReject').addEventListener('click', processRejection);
+});
+</script>
+{% endblock %}

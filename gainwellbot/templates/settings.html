@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Settings</h1>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="bi bi-gear-fill"></i> Bot Configuration
+                </h6>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="shortlink_reward" class="form-label">
+                            <i class="bi bi-link-45deg"></i> Shortlink Reward Amount
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">₱</span>
+                            <input type="number" 
+                                   step="0.0001" 
+                                   min="0" 
+                                   class="form-control" 
+                                   id="shortlink_reward" 
+                                   name="shortlink_reward" 
+                                   value="{{ current_reward }}" 
+                                   required
+                            >
+                        </div>
+                        <div class="form-text">
+                            Amount users earn when they complete a shortlink task. 
+                            Current: <strong>₱{{ current_reward }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="captcha_reward" class="form-label">
+                            <i class="bi bi-shield-check"></i> Captcha Reward Amount
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">₱</span>
+                            <input type="number" 
+                                   step="0.0001" 
+                                   min="0" 
+                                   class="form-control" 
+                                   id="captcha_reward" 
+                                   name="captcha_reward" 
+                                   value="{{ current_captcha_reward }}" 
+                                   required
+                            >
+                        </div>
+                        <div class="form-text">
+                            Amount users earn when they complete a captcha task (10 captchas per session).
+                            Current: <strong>₱{{ current_captcha_reward }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="base_url" class="form-label">
+                            <i class="bi bi-link-45deg"></i> Base URL
+                        </label>
+                        <input type="url" 
+                               class="form-control" 
+                               id="base_url" 
+                               name="base_url" 
+                               value="{{ current_base_url }}" 
+                               placeholder="https://example.com"
+                               required>
+                        <div class="form-text">
+                            Base URL for your application. The system will automatically append:
+                            <br>• /reward.html for shortlink rewards
+                            <br>• /captcha.html for captcha tasks  
+                            <br>• /watch_ads.html for watch ads tasks
+                            <br><strong>Example:</strong> Enter 'https://example.com' and links will be generated as 'https://example.com/reward.html'
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="watch_ads_reward" class="form-label">
+                            <i class="bi bi-camera-reels"></i> Watch Ads Reward Amount
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">₱</span>
+                            <input type="number" 
+                                   step="0.0001" 
+                                   min="0" 
+                                   class="form-control" 
+                                   id="watch_ads_reward" 
+                                   name="watch_ads_reward" 
+                                   value="{{ current_watch_ads_reward }}" 
+                                   required
+                            >
+                        </div>
+                        <div class="form-text">
+                            Amount users earn when they watch ads.
+                            Current: <strong>₱{{ current_watch_ads_reward }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Save Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-info">
+                    <i class="bi bi-info-circle"></i> Information
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>URL Configuration:</strong><br>
+                    • Single base URL for all pages<br>
+                    • System automatically appends page paths<br>
+                    • /reward.html for shortlink rewards<br>
+                    • /captcha.html for captcha tasks<br>
+                    • /watch_ads.html for watch ads
+                </div>
+
+                <div class="alert alert-info">
+                    <strong>Reward System:</strong><br>
+                    • Users can earn from each task every 24 hours<br>
+                    • Captcha requires completing 10 tasks<br>
+                    • All rewards are added instantly to user balance
+                </div>
+
+                <div class="alert alert-warning">
+                    <strong>Important:</strong><br>
+                    Changes take effect immediately for new tasks.
+                    Ensure your base URL hosts all required pages.
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-success">
+                    <i class="bi bi-activity"></i> Current Statistics
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-4 mb-2">
+                        <small class="text-muted">Shortlink</small><br>
+                        <span class="h4 text-success">₱{{ current_reward }}</span>
+                    </div>
+                    <div class="col-4 mb-2">
+                        <small class="text-muted">Captcha</small><br>
+                        <span class="h4 text-success">₱{{ current_captcha_reward }}</span>
+                    </div>
+                    <div class="col-4 mb-2">
+                        <small class="text-muted">Watch Ads</small><br>
+                        <span class="h4 text-success">₱{{ current_watch_ads_reward }}</span>
+                    </div>
+                </div>
+                <div class="text-center mt-2">
+                    <small class="text-muted">Current Base URL</small><br>
+                    <code>{{ current_base_url }}</code>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-secondary">
+                    <i class="bi bi-arrow-left"></i> Quick Actions
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-house"></i> Dashboard
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('users') }}" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-people"></i> Manage Users
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('withdrawals') }}" class="btn btn-outline-success w-100">
+                            <i class="bi bi-cash"></i> Withdrawals
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('broadcast') }}" class="btn btn-outline-info w-100">
+                            <i class="bi bi-megaphone"></i> Broadcast
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

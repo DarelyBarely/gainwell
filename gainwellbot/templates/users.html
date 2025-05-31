@@ -1,0 +1,177 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">User Management</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <span class="badge bg-primary fs-6">Total: {{ total_users }} users</span>
+        </div>
+    </div>
+</div>
+
+<!-- Mobile Cards for small screens -->
+<div class="d-block d-md-none">
+    {% for user in users %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-6">
+                    <small class="text-muted">User ID</small>
+                    <div><code>{{ user.user_id }}</code></div>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted">Status</small>
+                    <div>{{ user.status|safe }}</div>
+                </div>
+            </div>
+            <hr class="my-2">
+            <div class="row">
+                <div class="col-6">
+                    <small class="text-muted">Name</small>
+                    <div>{{ user.first_name }}</div>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted">Username</small>
+                    <div>{{ user.username }}</div>
+                </div>
+            </div>
+            <hr class="my-2">
+            <div class="row">
+                <div class="col-6">
+                    <small class="text-muted">Balance</small>
+                    <div><strong>{{ user.balance }}</strong></div>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted">Referrals</small>
+                    <div><span class="badge bg-info">{{ user.referrals }}</span></div>
+                </div>
+            </div>
+            <hr class="my-2">
+            <div class="row">
+                <div class="col-12">
+                    <small class="text-muted">Joined</small>
+                    <div>{{ user.created_at }}</div>
+                </div>
+            </div>
+            <hr class="my-2">
+            <div class="d-grid gap-2">
+                {% if user.is_banned %}
+                    <button class="btn btn-success" onclick="unbanUser({{ user.user_id }})">
+                        <i class="bi bi-check-circle"></i> Unban User
+                    </button>
+                {% else %}
+                    <button class="btn btn-warning" onclick="banUser({{ user.user_id }})">
+                        <i class="bi bi-x-circle"></i> Ban User
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Desktop Table for medium+ screens -->
+<div class="card d-none d-md-block">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Balance</th>
+                        <th>Referrals</th>
+                        <th>Status</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td><code>{{ user.user_id }}</code></td>
+                        <td>{{ user.first_name }}</td>
+                        <td>{{ user.username }}</td>
+                        <td><strong>{{ user.balance }}</strong></td>
+                        <td><span class="badge bg-info">{{ user.referrals }}</span></td>
+                        <td>{{ user.status|safe }}</td>
+                        <td>{{ user.created_at }}</td>
+                        <td>
+                            {% if user.is_banned %}
+                                <button class="btn btn-success btn-sm" onclick="unbanUser({{ user.user_id }})">
+                                    <i class="bi bi-check-circle"></i> Unban
+                                </button>
+                            {% else %}
+                                <button class="btn btn-warning btn-sm" onclick="banUser({{ user.user_id }})">
+                                    <i class="bi bi-x-circle"></i> Ban
+                                </button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination (shared by both mobile and desktop) -->
+{% if total_pages > 1 %}
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        {% if page > 1 %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('users', page=page-1) }}">Previous</a>
+        </li>
+        {% endif %}
+
+        {% for p in range(1, total_pages + 1) %}
+        <li class="page-item {{ 'active' if p == page else '' }}">
+            <a class="page-link" href="{{ url_for('users', page=p) }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+
+        {% if page < total_pages %}
+        <li class="page-item">
+            <a class="page-link" href="{{ url_for('users', page=page+1) }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function banUser(userId) {
+    if (confirm('Are you sure you want to ban this user?')) {
+        fetch(`/api/ban_user/${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            });
+    }
+}
+
+function unbanUser(userId) {
+    if (confirm('Are you sure you want to unban this user?')) {
+        fetch(`/api/unban_user/${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            });
+    }
+}
+</script>
+{% endblock %}

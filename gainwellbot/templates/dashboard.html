@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Dashboard</h1>
+</div>
+
+<div class="row">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="bi bi-people-fill fs-1"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Total Users</div>
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.total_users }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card-green h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="bi bi-check-circle-fill fs-1"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-weight-bold text-uppercase mb-1 text-white">Active Users</div>
+                        <div class="h5 mb-0 font-weight-bold text-white">{{ stats.active_users }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card-blue h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="bi bi-cash-stack fs-1"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-weight-bold text-uppercase mb-1 text-white">Total Balance</div>
+                        <div class="h5 mb-0 font-weight-bold text-white">{{ stats.total_balance }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="bi bi-hourglass-split fs-1"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-weight-bold text-uppercase mb-1">Pending Withdrawals</div>
+                        <div class="h5 mb-0 font-weight-bold">{{ stats.pending_withdrawals }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">User Statistics</h6>
+            </div>
+            <div class="card-body">
+                <div class="row no-gutters align-items-center mb-3">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Total Referrals</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_referrals }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-share fs-2 text-gray-300"></i>
+                    </div>
+                </div>
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Banned Users</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.banned_users }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-x-circle fs-2 text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">Financial Overview</h6>
+            </div>
+            <div class="card-body">
+                <div class="row no-gutters align-items-center mb-3">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pending Amount</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.pending_amount }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-clock fs-2 text-gray-300"></i>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <a href="{{ url_for('withdrawals') }}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-eye"></i> View Withdrawals
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('users') }}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-people"></i> Manage Users
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('withdrawals') }}" class="btn btn-outline-success w-100">
+                            <i class="bi bi-cash"></i> Process Withdrawals
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('add_balance') }}" class="btn btn-outline-info w-100">
+                            <i class="bi bi-plus-circle"></i> Add Balance
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('withdrawals', status='approved') }}" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-check-circle"></i> Approved Withdrawals
+                        </a>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-3 mb-2">
+                        <a href="{{ url_for('settings') }}" class="btn btn-outline-warning w-100">
+                            <i class="bi bi-gear"></i> Settings
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

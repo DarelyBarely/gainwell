@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">📢 Broadcast Message</h1>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Send Message to All Users</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message Content</label>
+                        <textarea class="form-control" id="message" name="message" rows="6" required 
+                                  placeholder="Enter your broadcast message here..."></textarea>
+                        <div class="form-text">This message will be sent to all active users via Telegram.</div>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <strong>Warning:</strong> This message will be sent to ALL active users. Please review carefully before sending.
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-megaphone"></i> Send Broadcast
+                        </button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Dashboard
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="card-title mb-0">💡 Broadcast Tips</h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0">
+                    <li>Keep messages concise and clear</li>
+                    <li>Use emojis to make messages more engaging</li>
+                    <li>Avoid sending too frequent broadcasts</li>
+                    <li>Test with a small group first for important announcements</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
