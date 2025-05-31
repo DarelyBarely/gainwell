@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GainWell - Claim Your Reward</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+        }
+
+        .logo {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .status-icon {
+            font-size: 80px;
+            margin: 30px 0;
+            display: block;
+        }
+
+        .success {
+            color: #4CAF50;
+        }
+
+        .error {
+            color: #f44336;
+        }
+
+        .loading {
+            color: #2196F3;
+            animation: pulse 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.6; }
+            to { opacity: 1; }
+        }
+
+        .message {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .reward-amount {
+            font-size: 32px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin: 20px 0;
+            text-shadow: 0 2px 4px rgba(76, 175, 80, 0.2);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2196F3;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-details {
+            background: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        .success-details {
+            background: #e8f5e8;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .status-icon {
+                font-size: 60px;
+            }
+
+            .reward-amount {
+                font-size: 28px;
+            }
+        }
+
+        .success-container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+
+        .success-container .success-icon {
+            font-size: 50px;
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        .success-container h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .success-container .reward-amount {
+            font-size: 24px;
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        .success-container .reward-details {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .success-container .reward-details p {
+            margin: 5px 0;
+        }
+
+        .success-container .claim-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .success-container .claim-btn:hover {
+            background-color: #45a049;
+        }
+
+        .captcha-input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">💰</div>
+        <h1>GainWell Reward</h1>
+
+        <div id="loading-state">
+            <div class="status-icon loading">⏳</div>
+            <div class="spinner"></div>
+            <p class="message">Verifying your reward link...</p>
+        </div>
+
+        <div id="success-state" style="display: none;">
+            <div class="status-icon success">🎉</div>
+            <h2>Congratulations!</h2>
+            <div class="reward-amount">+ ₱0.0724</div>
+            <div class="success-details">
+                <strong>Reward Claimed Successfully!</strong><br>
+                Your GainWell balance has been updated.
+            </div>
+            <p class="message">
+                Thank you for using GainWell! Your reward has been added to your account.
+                Return to the Telegram bot to see your updated balance.
+            </p>
+            <a href="https://t.me/gainwellbot" class="btn">
+                🤖 Return to Bot
+            </a>
+        </div>
+
+        <div id="error-state" style="display: none;">
+            <div class="status-icon error">❌</div>
+            <h2 id="error-title">Oops!</h2>
+            <div class="error-details">
+                <strong id="error-message">Something went wrong</strong><br>
+                <span id="error-description">Please try again later.</span>
+            </div>
+            <p class="message" id="error-help">
+                If you continue to experience issues, please contact support through the bot.
+            </p>
+            <a href="https://t.me/gainwellbot" class="btn">
+                🤖 Return to Bot
+            </a>
+        </div>
+
+        <div id="rewardContainer"></div>
+
+        
+    </div>
+
+    <script>
+        // Get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Show different states
+        function showLoading() {
+            document.getElementById('loading-state').style.display = 'block';
+            document.getElementById('success-state').style.display = 'none';
+            document.getElementById('error-state').style.display = 'none';
+        }
+
+        function showSuccess() {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('success-state').style.display = 'block';
+            document.getElementById('error-state').style.display = 'none';
+        }
+
+        function showError(title, message, description) {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('success-state').style.display = 'none';
+            document.getElementById('error-state').style.display = 'block';
+
+            document.getElementById('error-title').textContent = title;
+            document.getElementById('error-message').textContent = message;
+            document.getElementById('error-description').textContent = description;
+        }
+
+        // Main reward claiming logic
+        async function claimReward() {
+            const code = getUrlParameter('code');
+
+            if (!code) {
+                showError(
+                    'Invalid Link', 
+                    'No reward code found in this link.',
+                    'This link appears to be invalid or corrupted. Please generate a new shortlink from the bot.'
+                );
+                return;
+            }
+
+            try {
+                // Get user's IP and user agent for tracking
+                const userAgent = navigator.userAgent;
+                let userIP = '';
+
+                try {
+                    // Try to get IP address (optional, will work without it)
+                    const ipResponse = await fetch('https://api.ipify.org?format=json');
+                    const ipData = await ipResponse.json();
+                    userIP = ipData.ip;
+                } catch (e) {
+                    console.log('Could not get IP address');
+                }
+
+                // Call your bot's reward API endpoint
+                // Using the current domain for the API call
+                const rewardResponse = await fetch('/api/claim-shortlink-reward', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        ip_address: userIP,
+                        user_agent: userAgent
+                    })
+                });
+
+                const result = await rewardResponse.json();
+
+                if (result.success) {
+                    showSuccess();
+                } else {
+                    showError(
+                        result.title || 'Reward Error',
+                        result.message || 'Unable to process reward',
+                        'Please contact support if this issue persists.'
+                    );
+                }
+
+            } catch (error) {
+                console.error('Error claiming reward:', error);
+                showError(
+                    'Connection Error',
+                    'Unable to connect to reward server',
+                    'Please check your internet connection and try again.'
+                );
+            }
+        }
+
+        // Captcha reward claiming
+        async function claimCaptchaReward(captcha) {
+            try {
+                // Get user's IP and user agent for tracking
+                const userAgent = navigator.userAgent;
+                let userIP = '';
+
+                try {
+                    // Try to get IP address (optional, will work without it)
+                    const ipResponse = await fetch('https://api.ipify.org?format=json');
+                    const ipData = await ipResponse.json();
+                    userIP = ipData.ip;
+                } catch (e) {
+                    console.log('Could not get IP address');
+                }
+
+                // Call your bot's captcha reward API endpoint
+                const rewardResponse = await fetch('/api/claim-captcha-reward', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        captcha: captcha,
+                        ip_address: userIP,
+                        user_agent: userAgent
+                    })
+                });
+
+                const rewardData = await rewardResponse.json();
+
+                if (rewardData.success) {
+                    showCaptchaSuccess(rewardData);
+                } else {
+                    showError(rewardData.title || 'Captcha Failed', rewardData.message || 'Unable to complete captcha');
+                }
+
+            } catch (error) {
+                console.error('Error claiming captcha reward:', error);
+                showError(
+                    'Network Error',
+                    'Unable to connect to captcha server.',
+                    'Please check your internet connection and try again.'
+                );
+            }
+        }
+
+        // Show captcha success with progress
+        function showCaptchaSuccess(data) {
+            const progressText = data.session_completed 
+                ? 'Session Complete! 🎉' 
+                : `Progress: ${data.completed_count}/${data.total_captchas}`;
+
+            const nextText = data.session_completed 
+                ? 'Next session available in 24 hours!' 
+                : 'Continue with remaining captchas in the bot.';
+
+            document.getElementById('rewardContainer').innerHTML = `
+                <div class="success-container">
+                    <div class="success-icon">🛡️</div>
+                    <h2>Captcha Completed!</h2>
+                    <div class="reward-amount">₱${data.amount.toFixed(4)}</div>
+                    <div class="reward-details">
+                        <p><strong>Captcha ${data.captcha_number}/10 ✅</strong></p>
+                        <p><strong>${progressText}</strong></p>
+                        <p>${nextText}</p>
+                    </div>
+                    <button onclick="window.close()" class="claim-btn" style="margin-top: 15px;">
+                        Close Window
+                    </button>
+                </div>
+            `;
+        }
+
+        // Start the reward claiming process when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add a small delay to show the loading state
+            setTimeout(() => {
+                claimReward();
+            }, 1000);
+        });
+
+        // Add some visual effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate container entrance
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                container.style.transition = 'all 0.6s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
